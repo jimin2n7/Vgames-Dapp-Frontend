@@ -25,5 +25,7 @@ export const config = {
     '/lottery',
     '/nfts',
     '/info/:path*',
+    '/mint-nft',
+    '/my-inventory',
   ],
 }

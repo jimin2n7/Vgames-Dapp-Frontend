@@ -7,10 +7,10 @@ import { getCakeVaultAddress } from 'utils/addressHelpers'
 import { getCakeContract } from 'utils/contractHelpers'
 import { getBlocksFromTimestamps } from 'utils/getBlocksFromTimestamps'
 import { bitQueryServerClient, infoServerClient } from 'utils/graphql'
-import Home from '../views/Home'
+import MintNFT from 'views/MintNFT'
 
 const IndexPage = () => {
-  return <Home />
+  return <MintNFT />
 }
 
 // Values fetched from TheGraph and BitQuery jan 24, 2022
