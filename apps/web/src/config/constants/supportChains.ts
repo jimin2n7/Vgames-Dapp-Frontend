@@ -1,6 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { supportedChainId } from '@pancakeswap/farms'
 
+export const SUPPORT_ONLY_BSC_TESTNET = [ChainId.BSC_TESTNET]
 export const SUPPORT_ONLY_BSC = [ChainId.BSC]
 export const SUPPORT_FARMS = supportedChainId
 export const SUPPORT_BUY_CRYPTO = [
@@ -17,7 +18,7 @@ export const LIQUID_STAKING_SUPPORTED_CHAINS = [
   ChainId.BSC,
   ChainId.ETHEREUM,
   ChainId.BSC_TESTNET,
-  ChainId.ARBITRUM_GOERLI,
+  // ChainId.ARBITRUM_GOERLI,
 ]
 export const FIXED_STAKING_SUPPORTED_CHAINS = [ChainId.BSC]
 
