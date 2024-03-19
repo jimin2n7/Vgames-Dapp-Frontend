@@ -22,6 +22,7 @@ import {
   getMasterChefV3Address,
   getNftMarketAddress,
   getNftSaleAddress,
+  getNftVgamesAddress,
   getNonBscVaultAddress,
   getPancakeProfileAddress,
   getPancakeSquadAddress,
@@ -82,6 +83,7 @@ import { lotteryV2ABI } from 'config/abi/lotteryV2'
 import { lpTokenABI } from 'config/abi/lpTokenAbi'
 import { masterChefV2ABI } from 'config/abi/masterchefV2'
 import { nftMarketABI } from 'config/abi/nftMarket'
+import { nftVgamesABI } from 'config/abi/nftVgames'
 import { pancakeProfileABI } from 'config/abi/pancakeProfile'
 import { pancakeSquadABI } from 'config/abi/pancakeSquad'
 import { potteryDrawABI } from 'config/abi/potteryDrawAbi'
@@ -231,6 +233,10 @@ export const getChainlinkOracleContract = (address: Address, signer?: WalletClie
 
 export const getFarmAuctionContract = (signer?: WalletClient) => {
   return getContract({ abi: farmAuctionABI, address: getFarmAuctionAddress(), signer })
+}
+
+export const getNftVgamesContract = (chainId?: number, signer?: WalletClient) => {
+  return getContract({ abi: nftVgamesABI, address: getNftVgamesAddress(chainId), signer, chainId })
 }
 
 export const getNftMarketContract = (signer?: WalletClient) => {
