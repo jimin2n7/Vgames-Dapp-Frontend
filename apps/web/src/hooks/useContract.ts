@@ -32,6 +32,7 @@ import {
   getMasterChefV3Contract,
   getNftMarketContract,
   getNftSaleContract,
+  getNftVgamesContract,
   getNonBscVaultContract,
   getPointCenterIfoContract,
   getPositionManagerAdapterContract,
@@ -224,6 +225,12 @@ export const useChainlinkOracleContract = (address) => {
 export const useNftSaleContract = () => {
   const { data: signer } = useWalletClient()
   return useMemo(() => getNftSaleContract(signer ?? undefined), [signer])
+}
+
+export const useNftVgamesContract = () => {
+  const { data: signer } = useWalletClient()
+  const { chainId } = useActiveChainId()
+  return useMemo(() => getNftVgamesContract(chainId, signer ?? undefined), [signer, chainId])
 }
 
 export const useFarmAuctionContract = () => {

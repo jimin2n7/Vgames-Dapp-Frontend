@@ -243,4 +243,7 @@ export default {
     [ChainId.BSC]: '0x011f2a82846a4E9c62C2FC4Fd6fDbad19147D94A',
     [ChainId.BSC_TESTNET]: '0x946273012ED616410F698536F1BF2513417BF8Ec',
   },
+  nftVgames: {
+    [ChainId.BSC_TESTNET]: '0xF2e5482c230cb62b1363039E4128a8f2A7Ce8f5D',
+  },
 } as const satisfies Record<string, Record<number, `0x${string}`>>
