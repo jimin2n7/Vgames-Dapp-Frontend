@@ -1,31 +1,6 @@
-import { SUPPORTED_CHAIN_IDS as IFO_SUPPORTED_CHAINS } from '@pancakeswap/ifos'
 import { ContextApi } from '@pancakeswap/localization'
-import { SUPPORTED_CHAIN_IDS as POOL_SUPPORTED_CHAINS } from '@pancakeswap/pools'
-import { SUPPORTED_CHAIN_IDS as POSITION_MANAGERS_SUPPORTED_CHAINS } from '@pancakeswap/position-managers'
-import { SUPPORTED_CHAIN_IDS as PREDICTION_SUPPORTED_CHAINS } from '@pancakeswap/prediction'
-import {
-  DropdownMenuItemType,
-  DropdownMenuItems,
-  EarnFillIcon,
-  EarnIcon,
-  MenuItemsType,
-  MoreIcon,
-  NftFillIcon,
-  NftIcon,
-  PancakeProtectorIcon,
-  SwapFillIcon,
-  SwapIcon,
-} from '@pancakeswap/uikit'
-import {
-  FIXED_STAKING_SUPPORTED_CHAINS,
-  LIQUID_STAKING_SUPPORTED_CHAINS,
-  SUPPORT_BUY_CRYPTO,
-  SUPPORT_CAKE_STAKING,
-  SUPPORT_FARMS,
-  SUPPORT_ONLY_BSC,
-} from 'config/constants/supportChains'
-import { getPerpetualUrl } from 'utils/getPerpetualUrl'
-import { nftsBaseUrl } from 'views/Nft/market/constants'
+import { DropdownMenuItems, MenuItemsType, NftFillIcon, NftIcon } from '@pancakeswap/uikit'
+import { SUPPORT_ONLY_BSC_TESTNET } from 'config/constants/supportChains'
 
 export type ConfigMenuDropDownItemsType = DropdownMenuItems & { hideSubNav?: boolean }
 export type ConfigMenuItemsType = Omit<MenuItemsType, 'items'> & { hideSubNav?: boolean; image?: string } & {
@@ -179,10 +154,12 @@ const config: (
         {
           label: t('Mint NFT'),
           href: `/mint-nft`,
+          supportChainIds: SUPPORT_ONLY_BSC_TESTNET,
         },
         {
           label: t('My Inventory'),
           href: `/my-inventory`,
+          supportChainIds: SUPPORT_ONLY_BSC_TESTNET,
         },
       ],
     },

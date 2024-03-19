@@ -133,6 +133,11 @@ const config = {
   async redirects() {
     return [
       {
+        source: '/',
+        destination: '/mint-nft',
+        permanent: true,
+      },
+      {
         source: '/send',
         destination: '/swap',
         permanent: true,
