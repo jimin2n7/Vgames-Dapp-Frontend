@@ -1,4 +1,4 @@
-export const nftVgamesABI = [
+export const nftVgames = [
   {
     inputs: [
       { internalType: 'string', name: '_symbol', type: 'string' },

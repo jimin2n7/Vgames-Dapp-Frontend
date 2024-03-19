@@ -186,7 +186,3 @@ export const getRevenueSharingVeCakeAddress = (chainId?: number) => {
 export const getRevenueSharingPoolGatewayAddress = (chainId?: number) => {
   return getAddressFromMap(addresses.revenueSharingPoolGateway, chainId)
 }
-
-export const getNftVgamesAddress = (chainId?: number) => {
-  return getAddressFromMap(addresses.nftVgames, chainId)
-}
