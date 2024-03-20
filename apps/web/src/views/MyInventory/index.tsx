@@ -38,13 +38,20 @@ export const Arrow = styled.div`
     cursor: pointer;
   }
 `
+interface NFT {
+  token_id: string
+  name: string
+  collection_logo: string
+  contract_type: string
+  owner_of: string
+}
 
 const MyInventory = () => {
   const { address, isConnected } = useAccount()
   const [viewMode, setViewMode] = useState(ViewMode.CARD)
   const [page, setPage] = useState(1)
   const [maxPage, setMaxPage] = useState(1)
-  const [nftList, setNftList] = useState([])
+  const [nftList, setNftList] = useState<NFT[]>([])
 
   const fetchNFTs = async (myAddress) => {
     try {
@@ -130,13 +137,13 @@ const MyInventory = () => {
                 {nftList
                   .map((nft) => {
                     return (
-                      <tr key={nft.token_id} data-test="nft-item-row">
+                      <tr key={nft?.token_id} data-test="nft-item-row">
                         <Td style={{ cursor: 'pointer', minWidth: '200px' }}>
                           <Flex alignItems="center">
                             <ProfileAvatar
                               src={
-                                nft?.collection?.logo
-                                  ? nft?.collection?.logo
+                                nft?.collection_logo
+                                  ? nft?.collection_logo
                                   : 'https://play-lh.googleusercontent.com/6gZqHzIlHgkJ8qZWInWukwD27cPF5ZlbQAZnHbksnfuBA1bu7xuFzGG5CADnfLHh1A'
                               }
                               width={48}
@@ -183,7 +190,7 @@ const MyInventory = () => {
         >
           {nftList.length > 0
             ? nftList.slice(ITEMS_PER_PAGE * (page - 1), page * ITEMS_PER_PAGE).map((nft) => {
-                return <NftCard key={nft.token_id} nft={nft} data-test="nft" />
+                return <NftCard key={nft?.token_id} nft={nft} data-test="nft" />
               })
             : null}
         </Grid>
