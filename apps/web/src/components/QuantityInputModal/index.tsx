@@ -30,11 +30,7 @@ const QuantityInputModal: React.FC<React.PropsWithChildren<QuantityInputModalPro
 
   const handleMintConfirm = async (quant: string) => {
     const receipt = await fetchWithCatchTxError(() => {
-      return callWithGasPrice(nftVgamesContract, 'mint', [
-        account,
-        quant,
-        ['0x0000000000000000000000000000000000000000000000000000000000000000'],
-      ])
+      return callWithGasPrice(nftVgamesContract, 'mint', [account, quant, []])
     })
     onDismiss?.()
   }
