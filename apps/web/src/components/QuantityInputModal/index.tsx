@@ -1,9 +1,11 @@
 /* eslint-disable react/no-array-index-key */
+import keccak256 from 'keccak256'
 import { BalanceInput, Button, Modal, ModalProps } from '@pancakeswap/uikit'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import useCatchTxError from 'hooks/useCatchTxError'
 import { useNftVgamesContract } from 'hooks/useContract'
 import useTheme from 'hooks/useTheme'
+import MerkleTree from 'merkletreejs'
 import { useEffect, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -29,8 +31,12 @@ const QuantityInputModal: React.FC<React.PropsWithChildren<QuantityInputModalPro
   }, [])
 
   const handleMintConfirm = async (quant: string) => {
+    const allowList = []
+    const leaves = allowList.map((x) => keccak256(x))
+    const tree = new MerkleTree(leaves, keccak256, { sortPairs: true })
+    const hash = keccak256(account)
     const receipt = await fetchWithCatchTxError(() => {
-      return callWithGasPrice(nftVgamesContract, 'mint', [account, quant, []])
+      return callWithGasPrice(nftVgamesContract, 'mint', [account, quant, tree.getHexProof(hash)])
     })
     onDismiss?.()
   }
