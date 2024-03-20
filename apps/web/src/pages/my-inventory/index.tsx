@@ -1,9 +1,7 @@
+import MyInventory from 'views/MyInventory'
+
 const MyInventoryPage = () => {
-  return (
-    <>
-      <p>This is My Inventory Page</p>
-    </>
-  )
+  return <MyInventory />
 }
 
 export default MyInventoryPage
