@@ -1,13 +1,14 @@
 /* eslint-disable react/no-array-index-key */
-import keccak256 from 'keccak256'
 import { BalanceInput, Button, Modal, ModalProps } from '@pancakeswap/uikit'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import useCatchTxError from 'hooks/useCatchTxError'
 import { useNftVgamesContract } from 'hooks/useContract'
 import useTheme from 'hooks/useTheme'
+import keccak256 from 'keccak256'
 import MerkleTree from 'merkletreejs'
 import { useEffect, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
+import ConnectWalletButton from '../ConnectWalletButton'
 
 interface QuantityInputModalProps extends ModalProps {
   onDismiss?: () => void
@@ -31,14 +32,16 @@ const QuantityInputModal: React.FC<React.PropsWithChildren<QuantityInputModalPro
   }, [])
 
   const handleMintConfirm = async (quant: string) => {
-    const allowList = []
-    const leaves = allowList.map((x) => keccak256(x))
-    const tree = new MerkleTree(leaves, keccak256, { sortPairs: true })
-    const hash = keccak256(account)
-    const receipt = await fetchWithCatchTxError(() => {
-      return callWithGasPrice(nftVgamesContract, 'mint', [account, quant, tree.getHexProof(hash)])
-    })
-    onDismiss?.()
+    if (account) {
+      const allowList = []
+      const leaves = allowList.map((x) => keccak256(x))
+      const tree = new MerkleTree(leaves, keccak256, { sortPairs: true })
+      const hash = keccak256(account)
+      const receipt = await fetchWithCatchTxError(() => {
+        return callWithGasPrice(nftVgamesContract, 'mint', [account, quant, tree.getHexProof(hash)])
+      })
+      onDismiss?.()
+    }
   }
 
   const handleChangeInput = (input: string) => {
@@ -52,14 +55,18 @@ const QuantityInputModal: React.FC<React.PropsWithChildren<QuantityInputModalPro
   return (
     <Modal title={title} onDismiss={onDismiss} headerBackground={theme.colors.gradientCardHeader}>
       <BalanceInput innerRef={balanceInputRef} placeholder="0" value={quantity} onUserInput={handleChangeInput} />
-      <Button
-        mt="8px"
-        isLoading={isLoading}
-        disabled={parseInt(quantity) <= 0 || quantity === ''}
-        onClick={() => handleMintConfirm(quantity)}
-      >
-        Confirm
-      </Button>
+      {account ? (
+        <Button
+          mt="8px"
+          isLoading={isLoading}
+          disabled={parseInt(quantity) <= 0 || quantity === ''}
+          onClick={() => handleMintConfirm(quantity)}
+        >
+          Confirm
+        </Button>
+      ) : (
+        <ConnectWalletButton mt="8px" />
+      )}
     </Modal>
   )
 }
