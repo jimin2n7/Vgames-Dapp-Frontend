@@ -1,7 +1,7 @@
 import {
-  ArrowBackIcon,
-  ArrowForwardIcon,
+  AutoRenewIcon,
   BunnyPlaceholderIcon,
+  Button,
   Card,
   Flex,
   Grid,
@@ -44,19 +44,22 @@ interface NFT {
   collection_logo: string
   contract_type: string
   owner_of: string
+  cursor: string
 }
 
 const MyInventory = () => {
   const { address, isConnected } = useAccount()
   const [viewMode, setViewMode] = useState(ViewMode.CARD)
-  const [page, setPage] = useState(1)
-  const [maxPage, setMaxPage] = useState(1)
+  const [nextCursorVal, setNextCursorVal] = useState(null)
   const [nftList, setNftList] = useState<NFT[]>([])
+  const [isFetchingNfts, setIsFetchingNfts] = useState(false)
 
-  const fetchNFTs = async (myAddress) => {
+  const fetchNFTs = async (myAddress, cursor) => {
     try {
       const res = await fetch(
-        `${MORALIS_BASEURL}/${myAddress}/nft?chain=bsc%20testnet&format=decimal&exclude_spam=false&token_addresses=0xF2e5482c230cb62b1363039E4128a8f2A7Ce8f5D&normalizeMetadata=false&media_items=false`,
+        `${MORALIS_BASEURL}/${myAddress}/nft?chain=bsc%20testnet&format=decimal&limit=8&exclude_spam=false&token_addresses=0xF2e5482c230cb62b1363039E4128a8f2A7Ce8f5D${
+          cursor ? `&cursor=${cursor}` : `&cursor=null`
+        }&normalizeMetadata=false&media_items=false`,
         {
           method: 'GET',
           headers: {
@@ -66,7 +69,12 @@ const MyInventory = () => {
         },
       )
       const response = await res.json()
-      setNftList(response.result.sort((a, b) => parseInt(b.token_id) - parseInt(a.token_id)))
+
+      setNextCursorVal(response.cursor)
+      const sortResponse = response.result.sort((a, b) => parseInt(b.token_id) - parseInt(a.token_id))
+
+      setNftList([...nftList, ...sortResponse])
+      setIsFetchingNfts(false)
     } catch (err) {
       console.log(err)
     }
@@ -74,27 +82,24 @@ const MyInventory = () => {
 
   useEffect(() => {
     if (isConnected && address) {
-      fetchNFTs(address)
+      fetchNFTs(address, null)
     }
   }, [])
 
   useEffect(() => {
     if (isConnected && address) {
-      fetchNFTs(address)
+      fetchNFTs(address, null)
     } else {
       setNftList([])
     }
   }, [address, isConnected])
 
-  useEffect(() => {
-    let extraPages = 1
-    if (nftList) {
-      if (nftList.length % ITEMS_PER_PAGE === 0) {
-        extraPages = 0
-      }
-      setMaxPage(Math.max(Math.floor(nftList.length / ITEMS_PER_PAGE) + extraPages, 1))
+  const handleLoadMore = async () => {
+    if (isConnected && address) {
+      setIsFetchingNfts(true)
+      await fetchNFTs(address, nextCursorVal)
     }
-  }, [nftList])
+  }
 
   return (
     <Page>
@@ -107,11 +112,11 @@ const MyInventory = () => {
       >
         <ToggleView idPrefix="clickMyInventory" viewMode={viewMode} onToggle={setViewMode} />
       </Flex>
-      {nftList && (
+      {/* {nftList && (
         <Flex p="16px">
           <Text bold>{nftList.length} Result</Text>
         </Flex>
-      )}
+      )} */}
 
       {viewMode === ViewMode.TABLE ? (
         <Card style={{ overflowX: 'auto' }} mb="32px">
@@ -134,34 +139,32 @@ const MyInventory = () => {
             </thead>
             {nftList.length > 0 ? (
               <tbody>
-                {nftList
-                  .map((nft) => {
-                    return (
-                      <tr key={nft?.token_id} data-test="nft-item-row">
-                        <Td style={{ cursor: 'pointer', minWidth: '200px' }}>
-                          <Flex alignItems="center">
-                            <ProfileAvatar
-                              src={
-                                nft?.collection_logo
-                                  ? nft?.collection_logo
-                                  : 'https://play-lh.googleusercontent.com/6gZqHzIlHgkJ8qZWInWukwD27cPF5ZlbQAZnHbksnfuBA1bu7xuFzGG5CADnfLHh1A'
-                              }
-                              width={48}
-                              height={48}
-                              mr="16px"
-                            />
-                            {nft?.name}
-                          </Flex>
-                        </Td>
-                        <Td>
-                          <Flex alignItems="center">{nft?.token_id}</Flex>
-                        </Td>
-                        <Td>{nft?.contract_type}</Td>
-                        <Td>{nft?.owner_of}</Td>
-                      </tr>
-                    )
-                  })
-                  .slice(ITEMS_PER_PAGE * (page - 1), page * ITEMS_PER_PAGE)}
+                {nftList.map((nft) => {
+                  return (
+                    <tr key={nft?.token_id} data-test="nft-item-row">
+                      <Td style={{ cursor: 'pointer', minWidth: '200px' }}>
+                        <Flex alignItems="center">
+                          <ProfileAvatar
+                            src={
+                              nft?.collection_logo
+                                ? nft?.collection_logo
+                                : 'https://play-lh.googleusercontent.com/6gZqHzIlHgkJ8qZWInWukwD27cPF5ZlbQAZnHbksnfuBA1bu7xuFzGG5CADnfLHh1A'
+                            }
+                            width={48}
+                            height={48}
+                            mr="16px"
+                          />
+                          {nft?.name}
+                        </Flex>
+                      </Td>
+                      <Td>
+                        <Flex alignItems="center">{nft?.token_id}</Flex>
+                      </Td>
+                      <Td>{nft?.contract_type}</Td>
+                      <Td>{nft?.owner_of}</Td>
+                    </tr>
+                  )
+                })}
               </tbody>
             ) : null}
           </Table>
@@ -189,29 +192,21 @@ const MyInventory = () => {
           data-test="nft-collection-row"
         >
           {nftList.length > 0
-            ? nftList.slice(ITEMS_PER_PAGE * (page - 1), page * ITEMS_PER_PAGE).map((nft) => {
+            ? nftList.map((nft) => {
                 return <NftCard key={nft?.token_id} nft={nft} data-test="nft" />
               })
             : null}
         </Grid>
       )}
-      {nftList.length > 0 ? (
+      {nextCursorVal ? (
         <PageButtons>
-          <Arrow
-            onClick={() => {
-              setPage(page === 1 ? page : page - 1)
-            }}
+          <Button
+            onClick={handleLoadMore}
+            disabled={isFetchingNfts}
+            endIcon={isFetchingNfts ? <AutoRenewIcon spin color="currentColor" /> : undefined}
           >
-            <ArrowBackIcon color={page === 1 ? 'textDisabled' : 'primary'} />
-          </Arrow>
-          <Text>{`Page ${page} of ${maxPage}`}</Text>
-          <Arrow
-            onClick={() => {
-              setPage(page === maxPage ? page : page + 1)
-            }}
-          >
-            <ArrowForwardIcon color={page === maxPage ? 'textDisabled' : 'primary'} />
-          </Arrow>
+            {isFetchingNfts ? 'Loading' : 'Load more'}
+          </Button>
         </PageButtons>
       ) : null}
     </Page>
